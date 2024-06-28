@@ -1,6 +1,7 @@
 import java.util.Collection;
 import java.util.Collections;
 import java.util.LinkedList;
+import java.util.List;
 
 public  class TGrafoNoDirigido extends TGrafoDirigido implements IGrafoNoDirigido, IGrafoKevinBacon {
     protected TAristas lasAristas = new TAristas();
@@ -288,6 +289,18 @@ public  class TGrafoNoDirigido extends TGrafoDirigido implements IGrafoNoDirigid
             verticeOrigen.articulacion(puntosDeArticulacion,contador);
         }
         return puntosDeArticulacion;
+    }
+
+        public List<TVertice> menosSaltos(Comparable origen, Comparable destino) {
+        if (origen != null && destino != null) {
+            TVertice vertOrigen = buscarVertice(origen);
+            TVertice vertDestino = buscarVertice(destino);
+            if (vertOrigen != null && vertDestino != null) {
+                desvisitarVertices();
+                return vertOrigen.menosSaltos(destino);
+            }
+        }
+        return null;
     }
 
 

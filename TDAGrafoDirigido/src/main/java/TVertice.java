@@ -10,6 +10,8 @@ public class TVertice<T> implements IVertice, IVerticeKevinBacon {
     private int numBacon=0;
     private int num_bajo=0;
     private int num_bp=0;
+    private TVertice predecesor;
+
 
     public Comparable getEtiqueta() {
         return etiqueta;
@@ -406,6 +408,62 @@ public class TVertice<T> implements IVertice, IVerticeKevinBacon {
                 }
             }
         }
+    }
+
+
+    public TCamino caminoMasCorto(Comparable etVertDest, TCamino caminoPrevio, TCamino caminoFinal, double[] costo, double[] min) {
+        setVisitado(true);
+        for (TAdyacencia adyacente : adyacentes) {
+            TVertice vertAdy = adyacente.getDestino();
+            if (!vertAdy.getVisitado()) {
+                caminoPrevio.agregarAdyacencia(adyacente);
+                costo[0] += adyacente.getCosto();
+                if (vertAdy.etiqueta.compareTo(etVertDest) == 0) {
+                    if (costo[0] < min[0]) {
+                        min[0] = costo[0];
+                        caminoFinal.getOtrosVertices().clear();
+                        caminoFinal.getOtrosVertices().addAll(caminoPrevio.getOtrosVertices());
+                        caminoFinal.setCostoTotal(caminoPrevio.getCostoTotal());
+                    }
+                } else {
+                    vertAdy.caminoMasCorto(etVertDest, caminoPrevio, caminoFinal, costo, min);
+                }
+                costo[0] -= adyacente.getCosto();
+                caminoPrevio.eliminarAdyacencia(adyacente);
+            }
+        }
+        setVisitado(false);
+        return caminoFinal;
+    }
+
+    public List<TVertice> menosSaltos(Comparable destino) {
+        Queue<TVertice> cola = new LinkedList<>();
+        List<TVertice> result = new LinkedList<>();
+        cola.add(this);
+        this.visitado = true;
+        loop:
+        while (!cola.isEmpty()) {
+            TVertice x = cola.remove();
+            for (TAdyacencia ady : (LinkedList<TAdyacencia>) x.getAdyacentes()) {
+                TVertice y = ady.getDestino();
+                if (!y.getVisitado()) {
+                    y.setVisitado(true);
+                    cola.add(y);
+                    y.predecesor = x;
+                    if (y.etiqueta.compareTo(destino) == 0) {
+                        result.add(0, y);
+                        TVertice p = y.predecesor;
+                        while (p.etiqueta.compareTo(this.etiqueta) != 0) {
+                            result.add(0, p);
+                            p = p.predecesor;
+                        }
+                        result.add(0, this);
+                        break loop;
+                    }
+                }
+            }
+        }
+        return result;
     }
 
 }

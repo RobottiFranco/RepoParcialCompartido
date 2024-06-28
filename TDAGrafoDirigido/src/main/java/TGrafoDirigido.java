@@ -584,9 +584,19 @@ public class TGrafoDirigido implements IGrafoDirigido {
         return result && verticeDestino.conectadoCon(verticeOrigen);
     }
 
-
-
-
+    public TCamino caminoMasCorto(Comparable origen, Comparable destino) {
+        if (origen != null && destino != null) {
+            TVertice vOrigen = buscarVertice(origen);
+            if (vOrigen == null) {
+                return null;
+            }
+            TCamino caminoPrevio = new TCamino(vOrigen);
+            TCamino result = caminoPrevio.copiar();
+            double[] min = {Double.MAX_VALUE};
+            return vOrigen.caminoMasCorto(destino, caminoPrevio, result, new double[1], min);
+        }
+        return null;
+    }
 
 
 }
